@@ -138,3 +138,83 @@ void *hilo_saxpy(void *arg)
 
     pthread_exit(NULL);
 }
+
+int main(int argc, char *argv[])
+{
+    limpiarPantalla();     // Limpiar la pantalla antes de iniciar el programa
+    mostrarPresentacion(); // Mostrar una presentación del programa
+    unsigned int seed;
+    int p;
+    int n_threads;
+    int max_iters;
+
+    // Analizar los argumentos de línea de comandos para obtener los parámetros
+    parseo_argumentos(argc, argv, &seed, &p, &n_threads, &max_iters);
+
+    // Imprimir los parámetros obtenidos
+    printf("p = %d, seed = %d, n_threads = %d, max_iters = %d\n", p, seed, n_threads, max_iters);
+
+    // Inicializar los vectores X, Y, y los promedios de Y con valores pseudoaleatorios
+    double *X;
+    double *Y;
+    double *Y_avgs;
+    inicializar_datos(&X, &Y, &Y_avgs, p, max_iters, seed);
+
+    // Generar un valor aleatorio para 'a'
+    double a = (double)rand() / RAND_MAX;
+
+    // Variables para medir el tiempo de ejecución
+    struct timeval t_inicio, t_final;
+
+    // Identificadores de los hilos
+    pthread_t hilo1, hilo2;
+
+    // Estructuras de datos para los hilos
+    struct datos_hilo datos_hilo1, datos_hilo2;
+
+    // Configurar datos para el primer hilo
+    datos_hilo1.X = X;
+    datos_hilo1.Y = Y;
+    datos_hilo1.Y_avgs = Y_avgs;
+    datos_hilo1.a = a;
+    datos_hilo1.p = p;
+    datos_hilo1.max_iters = max_iters;
+    datos_hilo1.id_hilo = 0;
+
+    // Configurar datos para el segundo hilo
+    datos_hilo2.X = X;
+    datos_hilo2.Y = Y;
+    datos_hilo2.Y_avgs = Y_avgs;
+    datos_hilo2.a = a;
+    datos_hilo2.p = p;
+    datos_hilo2.max_iters = max_iters;
+    datos_hilo2.id_hilo = 1;
+
+    // Obtener el tiempo de inicio
+    gettimeofday(&t_inicio, NULL);
+
+    // Crear los hilos
+    pthread_create(&hilo1, NULL, hilo_saxpy, (void *)&datos_hilo1);
+    pthread_create(&hilo2, NULL, hilo_saxpy, (void *)&datos_hilo2);
+
+    // Esperar a que los hilos terminen
+    pthread_join(hilo1, NULL);
+    pthread_join(hilo2, NULL);
+
+    // Obtener el tiempo de finalización
+    gettimeofday(&t_final, NULL);
+
+    // Calcular e imprimir el tiempo de ejecución
+    double tiempo_ejecucion = calcular_tiempo(t_inicio, t_final);
+    printf("Tiempo de ejecución: %f ms \n", tiempo_ejecucion);
+
+    // Imprimir los resultados finales
+    imprimir_resultados(Y, Y_avgs, p, max_iters);
+
+    // Liberar la memoria asignada
+    free(X);
+    free(Y);
+    free(Y_avgs);
+
+    return 0;
+}
