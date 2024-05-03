@@ -218,3 +218,30 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+
+void mostrarPresentacion() {
+    limpiarPantalla(); // Limpiar la pantalla antes de mostrar la presentación
+    printf("\n\n");
+    printf("*****************************************************************\n");
+    printf("*             Bienvenido al Programa Saxpy                      *\n");
+    printf("*                                                               *\n");
+    printf("*             TRABAJO HECHO POR Yuly Alvear Romo                *\n");
+    printf("*             TRABAJO HECHO POR Leidy Castaño                   *\n");
+    printf("*             TRABAJO HECHO POR Omar alberto Torres             *\n");
+    printf("*                                                               *\n");
+    printf("*****************************************************************\n");
+    printf("\n");
+    printf("Iniciando programa...\n");
+    printf("\n");
+    printf("Cargando ");
+    for (int i = 0; i < 10; i++) {
+        printf(".");
+        fflush(stdout); // Limpiar el buffer de salida para mostrar los puntos
+        usleep(300000); // Esperar 300 milisegundos entre cada punto
+    }
+    printf("\n\n");
+}
+
+void limpiarPantalla() {
+   system("clear");
+}
