@@ -94,11 +94,11 @@ void *saxpy_iteration(void *arg)
             sum += datos->Y[i];
         }
         // Suma atómica
-        datos->Y_avgs[it] = datos->Y_avgs[it] + sum;
-        // atomic_exchange(&datos->Y_avgs[it], atomic_load(&datos->Y_avgs[it]) + sum);
+        // datos->Y_avgs[it] = datos->Y_avgs[it] + sum;
+         atomic_exchange(&datos->Y_avgs[it], atomic_load(&datos->Y_avgs[it]) + sum);
         // Divide la suma por el tamaño del bloque
-        datos->Y_avgs[it] = datos->Y_avgs[it] / (double)(indice_final - indice_inicio + 1);
-        // atomic_exchange(&datos->Y_avgs[it], atomic_load(&datos->Y_avgs[it]) / (double)(indice_final - indice_inicio + 1));
+        // datos->Y_avgs[it] = datos->Y_avgs[it] / (double)(indice_final - indice_inicio + 1);
+         atomic_exchange(&datos->Y_avgs[it], atomic_load(&datos->Y_avgs[it]) / (double)(indice_final - indice_inicio + 1));
     }
 
     pthread_exit(NULL);
